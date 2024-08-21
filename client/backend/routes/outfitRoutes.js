@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Outfit = require('../models/Outfit');
 const { getWeatherData } = require("../services/weatherService");
 
 router.post('/test-create-user', async (req, res) => {
@@ -17,6 +18,31 @@ router.post('/test-create-user', async (req, res) => {
         res.json(savedUser);
     } catch (error) {
         res.status(500).json({ message: 'Failed to create user' });
+    }
+});
+
+router.post('/test-create-outfit', async (req, res) => {
+    try {
+        const newOutfit = new Outfit({
+            outfitName: 'Red Top White Pant Outfit',
+            temperatureRange: 'warm to too hot',
+            weatherType: 'sunny',
+            items: ['red top', 'white pants', 'dunks']
+        });
+
+        const savedOutfit = await newOutfit.save();
+        res.json(savedOutfit);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to create outfit' });
+    }
+});
+
+router.get('/test-outfits', async (req, res) => {
+    try {
+        const outfits = await Outfit.find();
+        res.json(outfits);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve outfits' });  
     }
 });
 
