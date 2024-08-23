@@ -8,6 +8,41 @@ const Outfit = require('../models/Outfit');
 const { getWeatherData } = require("../services/weatherService");
 const auth = require('../middleware/auth');
 
+router.get('/recommendations', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        const location = user.location;
+        const preferences = user.preferences;
+
+        const weatherData = await getWeatherData(location);
+
+        let outfitCriteria = {};
+
+        if (weatherData.main.temp < 15) {
+            outfitCriteria.temperatureRange = 'cold';
+        } else {
+            outfitCriteria.temperatureRange = 'warm';
+        }
+
+        if (weatherData.weather[0].main === 'Rain') {
+            outfitCriteria.weatherType = 'rainy';
+        } else if (weatherData.weather[0].main === 'Clear') {
+            outfitCriteria.weatherType = 'sunny';
+        } else {
+            outfitCriteria.weatherType = 'cloudy';
+        }
+
+        const outfits = await Outfit.find(outfitCriteria);
+
+        const recommendedOutfits = outfits.filter(outfit => outfit.temperatureRange === preferences);
+
+        res.json(recommendedOutfits);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 router.post('/signup', [
     check('username', 'Username is required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
