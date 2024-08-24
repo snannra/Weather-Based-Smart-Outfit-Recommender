@@ -9,6 +9,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+// Ensure environment variables are set
+if (!process.env.MONGODB_URI) {
+    console.error('MONGODB_URI is not defined in the environment variables.');
+    process.exit(1); // Exit the application with an error code
+}
+
+if (!process.env.JWT_SECRET) {
+    console.error('JWT_SECRET is not defined in the environment variables.');
+    process.exit(1);
+}
+
 app.use(cors());
 app.use(express.json());
 
@@ -18,13 +29,21 @@ app.get('/', (req, res) => {
     res.send('Weather Based Smart Outfit Recommender Backend');
 });
 
+// Optional: Health check route
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'UP',
+        dbConnected: mongoose.connection.readyState === 1
+    });
+});
+
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
+.then(() => {
     console.log('Connected to MongoDB');
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });
-  })
-  .catch((error) => {
+})
+.catch((error) => {
     console.error('Error connecting to MongoDB:', error);
 });

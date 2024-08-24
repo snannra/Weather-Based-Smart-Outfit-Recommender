@@ -43,6 +43,16 @@ router.get('/recommendations', auth, async (req, res) => {
     }
 });
 
+router.get('/me', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        res.json(user);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+});
+
 router.post('/signup', [
     check('username', 'Username is required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
@@ -95,7 +105,7 @@ router.post('/login', async (req, res) => {
     try {
         let user = await User.findOne({ email });
         if (!user) {
-            return req.status(400).json({ message: 'Invalid credentials' });
+            return res.status(400).json({ message: 'Invalid credentials' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -110,40 +120,6 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         console.error(error.message);
         res.status(500).json( { message: 'Server error' } );
-    }
-});
-
-router.post('/test-create-outfit', async (req, res) => {
-    try {
-        const newOutfit = new Outfit({
-            outfitName: 'Red Top White Pant Outfit',
-            temperatureRange: 'warm to too hot',
-            weatherType: 'sunny',
-            items: ['red top', 'white pants', 'dunks']
-        });
-
-        const savedOutfit = await newOutfit.save();
-        res.json(savedOutfit);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to create outfit' });
-    }
-});
-
-router.get('/test-outfits', async (req, res) => {
-    try {
-        const outfits = await Outfit.find();
-        res.json(outfits);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to retrieve outfits' });  
-    }
-});
-
-router.get('/test-users', async (req, res) => {
-    try {
-        const users = await User.find();
-        res.json(users);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to retrieve users' });  
     }
 });
 
