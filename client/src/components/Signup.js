@@ -76,9 +76,11 @@ const Signup = () => {
                     onChange={onChange} 
                     style={{ width: '100%', padding: '10px', marginBottom: '20px', borderRadius: '4px', border: '1px solid #ccc' }}
                 >
-                    <option value="warm">Warm Weather</option>
-                    <option value="cold">Cold Weather</option>
-                    <option value="cloudy">Cloudy Weather</option>
+                    <option value="sunny">Sunny</option>
+                    <option value="cloudy">Cloudy</option>
+                    <option value="rainy">Rainy</option>
+                    <option value="snowy">Snowy</option>
+                    <option value="misty">Misty</option>
                 </select>
                 <button 
                     type="submit" 

@@ -8,6 +8,50 @@ const Outfit = require('../models/Outfit');
 const { getWeatherData } = require("../services/weatherService");
 const auth = require('../middleware/auth');
 
+router.post('/create-basic-outfits', async (req, res) => {
+    const outfits = [
+        {
+            outfitName: 'Sunny Day Outfit',
+            temperatureRange: 'warm',
+            weatherType: 'sunny',
+            items: ['sunglasses', 'shorts', 't-shirt', 'sandals']
+        },
+        {
+            outfitName: 'Cloudy Day Outfit',
+            temperatureRange: 'warm',
+            weatherType: 'cloudy',
+            items: ['light jacket', 'jeans', 'sneakers']
+        },
+        {
+            outfitName: 'Rainy Day Outfit',
+            temperatureRange: 'warm',
+            weatherType: 'rainy',
+            items: ['raincoat', 'umbrella', 'waterproof boots']
+        },
+        {
+            outfitName: 'Snowy Day Outfit',
+            temperatureRange: 'cold',
+            weatherType: 'snowy',
+            items: ['winter coat', 'scarf', 'gloves', 'boots']
+        },
+        {
+            outfitName: 'Misty Day Outfit',
+            temperatureRange: 'cold',
+            weatherType: 'misty',
+            items: ['hoodie', 'jeans', 'sneakers', 'beanie']
+        }
+    ];
+
+    try {
+        await Outfit.insertMany(outfits);
+        res.status(201).json({ message: 'Basic outfits created successfully!' });
+    } catch (error) {
+        console.error('Error creating outfits:', error);
+        res.status(500).json({ message: 'Failed to create outfits' });
+    }
+});
+
+
 router.get('/recommendations', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
@@ -18,23 +62,33 @@ router.get('/recommendations', auth, async (req, res) => {
 
         let outfitCriteria = {};
 
+        // Determine temperature range
         if (weatherData.main.temp < 15) {
             outfitCriteria.temperatureRange = 'cold';
         } else {
             outfitCriteria.temperatureRange = 'warm';
         }
 
-        if (weatherData.weather[0].main === 'Rain') {
-            outfitCriteria.weatherType = 'rainy';
-        } else if (weatherData.weather[0].main === 'Clear') {
-            outfitCriteria.weatherType = 'sunny';
-        } else {
-            outfitCriteria.weatherType = 'cloudy';
-        }
+        // Map weather descriptions to weather types
+        const weatherDescription = weatherData.weather[0].description;
+
+        const weatherTypeMapping = {
+            'clear sky': 'sunny',
+            'few clouds': 'cloudy',
+            'scattered clouds': 'cloudy',
+            'broken clouds': 'cloudy',
+            'shower rain': 'rainy',
+            'rain': 'rainy',
+            'thunderstorm': 'rainy',
+            'snow': 'snowy',
+            'mist': 'misty',
+        };
+
+        outfitCriteria.weatherType = weatherTypeMapping[weatherDescription] || 'default'; 
 
         const outfits = await Outfit.find(outfitCriteria);
 
-        const recommendedOutfits = outfits.filter(outfit => outfit.temperatureRange === preferences);
+        const recommendedOutfits = outfits;
 
         res.json(recommendedOutfits);
     } catch (error) {
