@@ -9,7 +9,7 @@ const Signup = () => {
         email: '',
         password: '',
         location: '',
-        preferences: 'warm',
+        preferences: '',
     });
 
     const navigate = useNavigate();

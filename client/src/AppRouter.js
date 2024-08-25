@@ -6,6 +6,7 @@ import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import OutfitRecommendation from './components/OutfitRecommendation';
 import PrivateRoute from './components/PrivateRoute';
+import CreateOutfit from './components/CreateOutfit';
 
 const AppRouter = () => {
 
@@ -22,6 +23,10 @@ const AppRouter = () => {
                 <Route 
                     path="/" 
                     element={<Navigate to="/login" />} 
+                />
+                <Route 
+                    path="/create-outfit" 
+                    element={<CreateOutfit />} 
                 />
                 <Route 
                     path="/login" 

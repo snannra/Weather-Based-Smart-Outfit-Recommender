@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Dashboard = () => {
-
     const [user, setUser] = useState(null);
     const [weather, setWeather] = useState(null);
     const navigate = useNavigate();
@@ -53,12 +52,15 @@ const Dashboard = () => {
         };
         
         fetchUser();
-
     }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/login');
+    };
+
+    const handleCreateOutfit = () => {
+        navigate('/create-outfit'); // Navigate to the create outfit page
     };
 
     return (
@@ -97,6 +99,15 @@ const Dashboard = () => {
             )}
     
             <OutfitRecommendation />
+            
+            {/* New Button for Creating Outfits */}
+            <button 
+                onClick={handleCreateOutfit} 
+                style={styles.createOutfitButton}
+            >
+                Create New Outfit
+            </button>
+
             <button 
                 onClick={handleLogout} 
                 style={styles.logoutButton}
@@ -189,6 +200,18 @@ const styles = {
         fontWeight: '600',
         color: '#555',
     },
+    createOutfitButton: {
+        marginTop: '20px',
+        padding: '10px 20px',
+        backgroundColor: '#28a745', // Green color for the button
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '18px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        transition: 'background-color 0.3s ease',
+    },
     logoutButton: {
         marginTop: '20px',
         padding: '10px 20px',
@@ -199,12 +222,11 @@ const styles = {
         cursor: 'pointer',
         fontSize: '18px', // Larger font size for the button
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow for the button
-        transition: 'background-color 0.3s ease', // Smooth transition on hover
+        transition: 'background-color 0.3s ease',
     },
     logoutButtonHover: {
         backgroundColor: '#0056b3', // Darker blue on hover
     },
 };
-
 
 export default Dashboard;

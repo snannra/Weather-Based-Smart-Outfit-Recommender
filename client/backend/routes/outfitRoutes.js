@@ -8,6 +8,29 @@ const Outfit = require('../models/Outfit');
 const { getWeatherData } = require("../services/weatherService");
 const auth = require('../middleware/auth');
 
+router.post('/create-outfit', async (req, res) => {
+    const { outfitName, temperatureRange, weatherType, items } = req.body;
+
+    try {
+        // Create a new Outfit document
+        const newOutfit = new Outfit({
+            outfitName,
+            temperatureRange,
+            weatherType,
+            items
+        });
+
+        // Save the outfit to the database
+        await newOutfit.save();
+        
+        // Respond with a success message
+        res.status(201).json({ message: 'Outfit created successfully!', outfit: newOutfit });
+    } catch (error) {
+        console.error('Error creating outfit:', error);
+        res.status(500).json({ message: 'Failed to create outfit' });
+    }
+});
+
 router.post('/create-basic-outfits', async (req, res) => {
     const outfits = [
         {
