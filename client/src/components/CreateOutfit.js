@@ -81,9 +81,19 @@ const CreateOutfit = () => {
                         style={{ width: '100%', padding: '8px', marginTop: '5px' }}>
                         <option value="clear">Clear</option>
                         <option value="clouds">Clouds</option>
+                        <option value="thunderstorm">Thunderstorm</option>
+                        <option value="drizzle">Drizzle</option>
                         <option value="rain">Rain</option>
                         <option value="snow">Snow</option>
                         <option value="mist">Mist</option>
+                        <option value="smoke">Smoke</option>
+                        <option value="haze">Haze</option>
+                        <option value="dust">Dust</option>
+                        <option value="fog">Fog</option>
+                        <option value="sand">Sand</option>
+                        <option value="ash">Ash</option>
+                        <option value="squall">Squall</option>
+                        <option value="tornado">Tornado</option>
                     </select>
                 </div>
                 <div style={{ marginBottom: '20px' }}>
