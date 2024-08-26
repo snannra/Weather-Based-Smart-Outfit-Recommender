@@ -12,7 +12,7 @@ const path = require('path');
 const fs = require('fs');
 
 const storage = multer.diskStorage({
-    destination: './uploads/',  // Points to the uploads folder in the backend directory
+    destination: './uploads/',  
     filename: function (req, file, cb) {
         cb(null, Date.now() + path.extname(file.originalname));
     }
@@ -20,13 +20,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 1000000 }, // Limit file size to 1MB
+    limits: { fileSize: 1000000 },
 }).single('imageFile');  
 
 router.get('/outfits', auth, async (req, res) => {
     try {
         const currentWeatherMain = req.query.weatherMain;
-        console.log("Weather Main:", currentWeatherMain);  
 
         if (!currentWeatherMain) {
             return res.status(400).json({ message: 'Weather main parameter is missing' });
@@ -37,7 +36,6 @@ router.get('/outfits', auth, async (req, res) => {
             weatherType: currentWeatherMain.toLowerCase()
         });
 
-        // If no outfits are found, log the result and return an empty array
         if (!outfits || outfits.length === 0) {
             console.log('No outfits found for the weather type:', currentWeatherMain);
             return res.json([]);
@@ -47,8 +45,6 @@ router.get('/outfits', auth, async (req, res) => {
             ...outfit.toObject(),
             imagePath: outfit.imagePath(),
         }));
-
-        console.log("Outfits found:", outfitData); // Debugging line
 
         res.json(outfitData);
     } catch (error) {
@@ -61,12 +57,11 @@ router.post('/create-outfit', [auth, upload], async (req, res) => {
     const { outfitName, temperatureRange, weatherType, items } = req.body;
 
     try {
-        // Create the outfit object
         const newOutfit = new Outfit({
             outfitName,
             temperatureRange,
             weatherType,
-            items: items.split(',').map(item => item.trim()), // Assuming items is a comma-separated string
+            items: items.split(',').map(item => item.trim()),
             user: req.user.id, 
         });
 
@@ -75,10 +70,8 @@ router.post('/create-outfit', [auth, upload], async (req, res) => {
             newOutfit.imageType = req.file.mimetype;
         }
 
-        // Save the outfit to the database
         await newOutfit.save();
 
-        // Respond with a success message
         res.status(201).json({ message: 'Outfit created successfully!', outfit: newOutfit });
     } catch (error) {
         console.error('Error creating outfit:', error);
@@ -90,20 +83,17 @@ router.get('/recommendations', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
         const location = user.location;
-        const preferences = user.preferences;
 
         const weatherData = await getWeatherData(location);
 
         let outfitCriteria = {};
 
-        // Determine temperature range
         if (weatherData.main.temp < 15) {
             outfitCriteria.temperatureRange = 'cold';
         } else {
             outfitCriteria.temperatureRange = 'warm';
         }
 
-        // Map weather descriptions to weather types
         const weatherDescription = weatherData.weather[0].description;
 
         const weatherTypeMapping = {

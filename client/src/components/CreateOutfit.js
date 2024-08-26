@@ -39,7 +39,7 @@ const CreateOutfit = () => {
                 }
             });
             console.log(response.data);
-            navigate('/dashboard'); // Navigate to the dashboard page after successful creation
+            navigate('/dashboard');
         } catch (error) {
             console.error('Error creating outfit:', error);
             alert('Failed to create outfit');

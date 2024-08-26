@@ -23,7 +23,7 @@ const Signup = () => {
     const onSubmit = async e => {
         e.preventDefault();
 
-        const data = new FormData(); // Use FormData to send files
+        const data = new FormData(); 
         data.append('username', username);
         data.append('email', email);
         data.append('password', password);

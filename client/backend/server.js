@@ -10,10 +10,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Ensure environment variables are set
 if (!process.env.MONGODB_URI) {
     console.error('MONGODB_URI is not defined in the environment variables.');
-    process.exit(1); // Exit the application with an error code
+    process.exit(1); 
 }
 
 if (!process.env.JWT_SECRET) {
@@ -32,7 +31,6 @@ app.get('/', (req, res) => {
     res.send('Weather Based Smart Outfit Recommender Backend');
 });
 
-// Optional: Health check route
 app.get('/health', (req, res) => {
     res.json({
         status: 'UP',

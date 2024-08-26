@@ -46,7 +46,7 @@ const Dashboard = () => {
     };
 
     const handleCreateOutfit = () => {
-        navigate('/create-outfit'); // Navigate to the create outfit page
+        navigate('/create-outfit');
     };
 
     return (
@@ -111,7 +111,7 @@ const styles = {
         padding: '20px',
         marginBottom: '20px',
         border: '4px solid #4a4a4a',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Added subtle shadow for depth
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', 
     },
     profileImageContainer: {
         width: '150px',
@@ -151,45 +151,45 @@ const styles = {
     userInfoContent: {
         flex: 1,
         display: 'flex',
-        flexDirection: 'row', // Row layout to place items side by side
-        justifyContent: 'space-between', // Space between the two sections
-        alignItems: 'flex-start', // Aligns items to the top
+        flexDirection: 'row',
+        justifyContent: 'space-between', 
+        alignItems: 'flex-start', 
     },
     infoSection: {
-        flex: 1, // Each section takes up equal space
+        flex: 1,
         padding: '0 10px',
-        fontSize: '20px', // Increased font size
-        lineHeight: '1.6', // Adjusted line height for better readability
-        fontFamily: 'Arial, sans-serif', // Improved font choice
-        color: '#333', // Darker color for better contrast
+        fontSize: '20px', 
+        lineHeight: '1.6', 
+        fontFamily: 'Arial, sans-serif', 
+        color: '#333', 
     },
     infoText: {
         fontSize: '22px',
-        fontWeight: '500', // Slightly bolder text
-        color: '#333', // Text color
-        marginBottom: '8px', // Add space between lines
-        textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)', // Subtle shadow for text
+        fontWeight: '500', 
+        color: '#333', 
+        marginBottom: '8px',
+        textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)', 
     },
     highlight: {
-        color: '#007bff', // Blue color for highlights
+        color: '#007bff', 
         fontWeight: 'bold',
     },
     welcomeText: {
         marginBottom: '10px',
-        fontSize: '24px', // Larger font size for welcome text
+        fontSize: '24px',
         fontWeight: 'bold',
-        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)', // Subtle shadow for depth
+        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)', 
     },
     weatherHeader: {
         marginBottom: '10px',
-        fontSize: '20px', // Increased font size for weather headers
+        fontSize: '20px', 
         fontWeight: '600',
         color: '#555',
     },
     createOutfitButton: {
         marginTop: '20px',
         padding: '10px 20px',
-        backgroundColor: '#28a745', // Green color for the button
+        backgroundColor: '#28a745', 
         color: 'white',
         border: 'none',
         borderRadius: '4px',
@@ -206,12 +206,12 @@ const styles = {
         border: 'none',
         borderRadius: '4px',
         cursor: 'pointer',
-        fontSize: '18px', // Larger font size for the button
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow for the button
+        fontSize: '18px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         transition: 'background-color 0.3s ease',
     },
     logoutButtonHover: {
-        backgroundColor: '#0056b3', // Darker blue on hover
+        backgroundColor: '#0056b3',
     },
 };
 

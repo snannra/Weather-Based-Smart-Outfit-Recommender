@@ -13,7 +13,7 @@ const OutfitRecommendation = ({ weatherMain }) => {
                 });
                 console.log('Outfits:', response.data);
                 response.data.forEach(outfit => {
-                    console.log('Image Path:', outfit.imagePath); // Log each image path
+                    console.log('Image Path:', outfit.imagePath);
                 });
                 setOutfits(response.data);
             } catch (error) {
