@@ -6,8 +6,8 @@ const CreateOutfit = () => {
     
     const [outfitData, setOutfitData] = useState({
         outfitName: '',
-        temperatureRange: 'warm', 
-        weatherType: 'sunny', 
+        temperatureRange: 'Warm', 
+        weatherType: 'Clear', 
         items: '',
         imageFile: null,
     });
@@ -79,7 +79,7 @@ const CreateOutfit = () => {
                         value={weatherType} 
                         onChange={onChange} 
                         style={{ width: '100%', padding: '8px', marginTop: '5px' }}>
-                        <option value="sun">Sun</option>
+                        <option value="clear">Clear</option>
                         <option value="clouds">Clouds</option>
                         <option value="rain">Rain</option>
                         <option value="snow">Snow</option>

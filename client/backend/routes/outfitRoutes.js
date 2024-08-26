@@ -31,11 +31,10 @@ router.get('/outfits', auth, async (req, res) => {
         if (!currentWeatherMain) {
             return res.status(400).json({ message: 'Weather main parameter is missing' });
         }
-
-        // Filter outfits by the current user's ID and weatherType matching currentWeatherMain
+        
         const outfits = await Outfit.find({
             user: req.user.id, 
-            weatherType: currentWeatherMain.toLowerCase() // Assuming weatherType is stored in lowercase
+            weatherType: currentWeatherMain.toLowerCase()
         });
 
         // If no outfits are found, log the result and return an empty array
