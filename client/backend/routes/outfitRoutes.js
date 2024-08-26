@@ -26,7 +26,7 @@ const upload = multer({
 router.get('/outfits', auth, async (req, res) => {
     try {
         const currentWeatherMain = req.query.weatherMain;
-        console.log("Weather Main:", currentWeatherMain); // Debugging line
+        console.log("Weather Main:", currentWeatherMain);  
 
         if (!currentWeatherMain) {
             return res.status(400).json({ message: 'Weather main parameter is missing' });
@@ -86,51 +86,6 @@ router.post('/create-outfit', [auth, upload], async (req, res) => {
     }
 });
 
-
-router.post('/create-basic-outfits', async (req, res) => {
-    const outfits = [
-        {
-            outfitName: 'Sunny Day Outfit',
-            temperatureRange: 'warm',
-            weatherType: 'sunny',
-            items: ['sunglasses', 'shorts', 't-shirt', 'sandals']
-        },
-        {
-            outfitName: 'Cloudy Day Outfit',
-            temperatureRange: 'warm',
-            weatherType: 'cloudy',
-            items: ['light jacket', 'jeans', 'sneakers']
-        },
-        {
-            outfitName: 'Rainy Day Outfit',
-            temperatureRange: 'warm',
-            weatherType: 'rainy',
-            items: ['raincoat', 'umbrella', 'waterproof boots']
-        },
-        {
-            outfitName: 'Snowy Day Outfit',
-            temperatureRange: 'cold',
-            weatherType: 'snowy',
-            items: ['winter coat', 'scarf', 'gloves', 'boots']
-        },
-        {
-            outfitName: 'Misty Day Outfit',
-            temperatureRange: 'cold',
-            weatherType: 'misty',
-            items: ['hoodie', 'jeans', 'sneakers', 'beanie']
-        }
-    ];
-
-    try {
-        await Outfit.insertMany(outfits);
-        res.status(201).json({ message: 'Basic outfits created successfully!' });
-    } catch (error) {
-        console.error('Error creating outfits:', error);
-        res.status(500).json({ message: 'Failed to create outfits' });
-    }
-});
-
-
 router.get('/recommendations', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
@@ -179,14 +134,21 @@ router.get('/recommendations', auth, async (req, res) => {
 router.get('/me', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
-        res.json(user);
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+        const userData = {
+            ...user.toObject(),
+            profileImagePath: user.profileImagePath(),
+        };
+        res.json(userData);
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Server error');
     }
 });
 
-router.post('/signup', [
+router.post('/signup', upload, [
     check('username', 'Username is required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
@@ -212,6 +174,11 @@ router.post('/signup', [
             preferences
         });
 
+        if (req.file != null) {
+            user.profileImage = fs.readFileSync(req.file.path);
+            user.profileImageType = req.file.mimetype;
+        }
+
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
 
@@ -224,7 +191,9 @@ router.post('/signup', [
         };
 
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
-            if (err) throw err;
+            if (err)  {
+                throw err;
+            }
             res.json({ token });
         });
     } catch (err) {

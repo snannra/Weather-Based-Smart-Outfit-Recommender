@@ -10,21 +10,39 @@ const Signup = () => {
         password: '',
         location: '',
         preferences: '',
+        imageFile: null,
     });
 
     const navigate = useNavigate();
 
-    const { username, email, password, location, preferences } = formData;
+    const { username, email, password, location, preferences, imageFile } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+    const onFileChange = e => setFormData({ ...formData, imageFile: e.target.files[0] });
 
     const onSubmit = async e => {
         e.preventDefault();
+
+        const data = new FormData(); // Use FormData to send files
+        data.append('username', username);
+        data.append('email', email);
+        data.append('password', password);
+        data.append('location', location);
+        data.append('preferences', preferences);
+        if (imageFile) {
+            data.append('imageFile', imageFile);
+        }
+
         try {
-            const res = await axios.post('http://localhost:5001/api/outfits/signup', formData);
+            const res = await axios.post('http://localhost:5001/api/outfits/signup', data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
             localStorage.setItem('token', res.data.token);
             navigate('/dashboard');
         } catch (err) {
+            console.error('Error signing up:', err);
             console.error(err.response.data);
         }
     };
@@ -76,12 +94,28 @@ const Signup = () => {
                     onChange={onChange} 
                     style={{ width: '100%', padding: '10px', marginBottom: '20px', borderRadius: '4px', border: '1px solid #ccc' }}
                 >
-                    <option value="sunny">Sunny</option>
-                    <option value="cloudy">Cloudy</option>
-                    <option value="rainy">Rainy</option>
-                    <option value="snowy">Snowy</option>
-                    <option value="misty">Misty</option>
+                    <option value="clear">Clear</option>
+                    <option value="clouds">Clouds</option>
+                    <option value="thunderstorm">Thunderstorm</option>
+                    <option value="drizzle">Drizzle</option>
+                    <option value="rain">Rain</option>
+                    <option value="snow">Snow</option>
+                    <option value="mist">Mist</option>
+                    <option value="smoke">Smoke</option>
+                    <option value="haze">Haze</option>
+                    <option value="dust">Dust</option>
+                    <option value="fog">Fog</option>
+                    <option value="sand">Sand</option>
+                    <option value="ash">Ash</option>
+                    <option value="squall">Squall</option>
+                    <option value="tornado">Tornado</option>
                 </select>
+                <input 
+                    type="file" 
+                    name="imageFile" 
+                    onChange={onFileChange} 
+                    style={{ width: '100%', padding: '10px', marginBottom: '20px', borderRadius: '4px', border: '1px solid #ccc' }} 
+                />
                 <button 
                     type="submit" 
                     style={{ width: '100%', padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}

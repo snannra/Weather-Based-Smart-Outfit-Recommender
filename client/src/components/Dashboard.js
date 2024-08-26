@@ -8,20 +8,6 @@ const Dashboard = () => {
     const [weather, setWeather] = useState(null);
     const navigate = useNavigate();
 
-    const handleImageUpload = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setUser(prevUser => ({
-                    ...prevUser,
-                    profileImage: e.target.result
-                }));
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -45,7 +31,6 @@ const Dashboard = () => {
                     temp: response.data.main.temp,
                     main: response.data.weather[0].main,
                 };
-                console.log('Weather Data:', weatherData); // Debugging line
                 setWeather(weatherData);
             } catch (error) {
                 console.error('Error fetching Weather data: ', error);
@@ -71,20 +56,15 @@ const Dashboard = () => {
             {user && weather && (
                 <div style={styles.userInfoContainer}>
                     <div style={styles.profileImageContainer}>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            style={{ display: 'none' }}
-                            id="profile-image-upload"
-                        />
-                        <label htmlFor="profile-image-upload" style={styles.profileImageLabel}>
-                            {user.profileImage ? (
-                                <img src={user.profileImage} alt="Profile" style={styles.profileImage} />
+                        {user.profileImagePath ? (
+                            <img 
+                                src={user.profileImagePath} 
+                                alt={user.username} 
+                                style={styles.profileImage} 
+                            />
                             ) : (
-                                <div style={styles.profileImagePlaceholder}>Upload Image</div>
-                            )}
-                        </label>
+                                <div style={styles.profileImagePlaceholder}>No Image</div>
+                        )}
                     </div>
                     <div style={styles.userInfoContent}>
                         <div style={styles.infoSection}>
@@ -137,6 +117,12 @@ const styles = {
         width: '150px',
         height: '150px',
         marginRight: '40px',
+        borderRadius: '50%',
+        overflow: 'hidden',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#e0e0e0'
     },
     profileImageLabel: {
         display: 'block',
