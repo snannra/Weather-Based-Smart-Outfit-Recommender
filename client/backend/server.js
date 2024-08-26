@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const outfitRoutes = require('./routes/outfitRoutes');
+const path = require('path');
 
 dotenv.config();
 
@@ -24,6 +25,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/outfits', outfitRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 app.get('/', (req, res) => {
     res.send('Weather Based Smart Outfit Recommender Backend');

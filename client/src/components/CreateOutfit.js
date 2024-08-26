@@ -6,23 +6,37 @@ const CreateOutfit = () => {
     
     const [outfitData, setOutfitData] = useState({
         outfitName: '',
-        temperatureRange: 'warm', // Default value
-        weatherType: 'sunny', // Default value
+        temperatureRange: 'warm', 
+        weatherType: 'sunny', 
         items: '',
+        imageFile: null,
     });
 
     const navigate = useNavigate();
 
-    const { outfitName, temperatureRange, weatherType, items } = outfitData;
+    const { outfitName, temperatureRange, weatherType, items, imageFile } = outfitData;
 
     const onChange = e => setOutfitData({ ...outfitData, [e.target.name]: e.target.value });
+    const onFileChange = e => setOutfitData({ ...outfitData, imageFile: e.target.files[0] });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const formData = new FormData();
+        formData.append('outfitName', outfitName);
+        formData.append('temperatureRange', temperatureRange);
+        formData.append('weatherType', weatherType);
+        formData.append('items', items.split(',').map(item => item.trim()));
+        if (imageFile) {
+            formData.append('imageFile', imageFile);
+        }
+        
         try {
-            const response = await axios.post('http://localhost:5001/api/outfits/create-outfit', {
-                ...outfitData,
-                items: items.split(',').map(item => item.trim()) // Split items by commas and trim spaces
+            const response = await axios.post('http://localhost:5001/api/outfits/create-outfit', formData, {
+                headers: {
+                    'x-auth-token': localStorage.getItem('token'),
+                    'Content-Type': 'multipart/form-data',
+                }
             });
             console.log(response.data);
             navigate('/dashboard'); // Navigate to the dashboard page after successful creation
@@ -40,7 +54,7 @@ const CreateOutfit = () => {
                     <label>Outfit Name:</label>
                     <input 
                         type="text" 
-                        name="outfitName" // Added name attribute to bind with state
+                        name="outfitName" 
                         value={outfitName} 
                         onChange={onChange} 
                         required 
@@ -50,7 +64,7 @@ const CreateOutfit = () => {
                 <div style={{ marginBottom: '10px' }}>
                     <label>Temperature Range:</label>
                     <select 
-                        name="temperatureRange" // Added name attribute to bind with state
+                        name="temperatureRange" 
                         value={temperatureRange} 
                         onChange={onChange} 
                         style={{ width: '100%', padding: '8px', marginTop: '5px' }}>
@@ -61,25 +75,34 @@ const CreateOutfit = () => {
                 <div style={{ marginBottom: '10px' }}>
                     <label>Weather Type:</label>
                     <select 
-                        name="weatherType" // Added name attribute to bind with state
+                        name="weatherType" 
                         value={weatherType} 
                         onChange={onChange} 
                         style={{ width: '100%', padding: '8px', marginTop: '5px' }}>
-                        <option value="sunny">Sunny</option>
-                        <option value="cloudy">Cloudy</option>
-                        <option value="rainy">Rainy</option>
-                        <option value="snowy">Snowy</option>
-                        <option value="misty">Misty</option>
+                        <option value="sun">Sun</option>
+                        <option value="clouds">Clouds</option>
+                        <option value="rain">Rain</option>
+                        <option value="snow">Snow</option>
+                        <option value="mist">Mist</option>
                     </select>
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                     <label>Items (comma separated):</label>
                     <input 
                         type="text" 
-                        name="items" // Added name attribute to bind with state
+                        name="items" 
                         value={items} 
                         onChange={onChange} 
                         required 
+                        style={{ width: '100%', padding: '8px', marginTop: '5px' }} 
+                    />
+                </div>
+                <div style={{ marginBottom: '20px' }}>
+                    <label>Upload Outfit Image:</label>
+                    <input 
+                        type="file" 
+                        name="imageFile" 
+                        onChange={onFileChange} 
                         style={{ width: '100%', padding: '8px', marginTop: '5px' }} 
                     />
                 </div>

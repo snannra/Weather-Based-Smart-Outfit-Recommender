@@ -7,22 +7,78 @@ const User = require('../models/User');
 const Outfit = require('../models/Outfit');
 const { getWeatherData } = require("../services/weatherService");
 const auth = require('../middleware/auth');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
-router.post('/create-outfit', async (req, res) => {
+const storage = multer.diskStorage({
+    destination: './uploads/',  // Points to the uploads folder in the backend directory
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1000000 }, // Limit file size to 1MB
+}).single('imageFile');  
+
+router.get('/outfits', auth, async (req, res) => {
+    try {
+        const currentWeatherMain = req.query.weatherMain;
+        console.log("Weather Main:", currentWeatherMain); // Debugging line
+
+        if (!currentWeatherMain) {
+            return res.status(400).json({ message: 'Weather main parameter is missing' });
+        }
+
+        // Filter outfits by the current user's ID and weatherType matching currentWeatherMain
+        const outfits = await Outfit.find({
+            user: req.user.id, 
+            weatherType: currentWeatherMain.toLowerCase() // Assuming weatherType is stored in lowercase
+        });
+
+        // If no outfits are found, log the result and return an empty array
+        if (!outfits || outfits.length === 0) {
+            console.log('No outfits found for the weather type:', currentWeatherMain);
+            return res.json([]);
+        }
+
+        const outfitData = outfits.map(outfit => ({
+            ...outfit.toObject(),
+            imagePath: outfit.imagePath(),
+        }));
+
+        console.log("Outfits found:", outfitData); // Debugging line
+
+        res.json(outfitData);
+    } catch (error) {
+        console.error('Error fetching outfits:', error);
+        res.status(500).json({ message: 'Failed to fetch outfits' });
+    }
+});
+
+router.post('/create-outfit', [auth, upload], async (req, res) => {
     const { outfitName, temperatureRange, weatherType, items } = req.body;
 
     try {
-        // Create a new Outfit document
+        // Create the outfit object
         const newOutfit = new Outfit({
             outfitName,
             temperatureRange,
             weatherType,
-            items
+            items: items.split(',').map(item => item.trim()), // Assuming items is a comma-separated string
+            user: req.user.id, 
         });
+
+        if (req.file != null) {
+            newOutfit.image = fs.readFileSync(req.file.path);
+            newOutfit.imageType = req.file.mimetype;
+        }
 
         // Save the outfit to the database
         await newOutfit.save();
-        
+
         // Respond with a success message
         res.status(201).json({ message: 'Outfit created successfully!', outfit: newOutfit });
     } catch (error) {
@@ -30,6 +86,7 @@ router.post('/create-outfit', async (req, res) => {
         res.status(500).json({ message: 'Failed to create outfit' });
     }
 });
+
 
 router.post('/create-basic-outfits', async (req, res) => {
     const outfits = [

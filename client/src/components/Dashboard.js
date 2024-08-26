@@ -41,11 +41,12 @@ const Dashboard = () => {
                 const response = await axios.get(`http://localhost:5001/api/outfits/weather/${location}`, {
                     headers: { 'x-auth-token': localStorage.getItem('token')}
                 });
-                console.log('Weather Data:', response.data);
-                setWeather({
+                const weatherData = {
                     temp: response.data.main.temp,
-                    description: response.data.weather[0].description
-                });
+                    main: response.data.weather[0].main,
+                };
+                console.log('Weather Data:', weatherData); // Debugging line
+                setWeather(weatherData);
             } catch (error) {
                 console.error('Error fetching Weather data: ', error);
             }
@@ -92,15 +93,14 @@ const Dashboard = () => {
                         </div>
                         <div style={styles.infoSection}>
                             <p style={styles.infoText}>Temperature: <span style={styles.highlight}>{weather.temp}°C</span></p>
-                            <p style={styles.infoText}>Condition: <span style={styles.highlight}>{weather.description}</span></p>
+                            <p style={styles.infoText}>Condition: <span style={styles.highlight}>{weather.main}</span></p>
                         </div>
                     </div>
                 </div>
             )}
     
-            <OutfitRecommendation />
-            
-            {/* New Button for Creating Outfits */}
+            {weather?.main && <OutfitRecommendation weatherMain={weather.main}/>}
+
             <button 
                 onClick={handleCreateOutfit} 
                 style={styles.createOutfitButton}
